@@ -11,8 +11,34 @@ MAINTAINER Shawn McNaughton
 # Update the repository sources list
 RUN apt-get update --quiet
 
+############################################################
 # Get the package from GitHub
-wget https://github.com/shawngmc/ServerSelfConfig/blob/master/PhantServer/phantconfig-custom-20150502.zip?raw=true
+############################################################
+# Make the repo
+mkdir repo
+cd repo
+git init
+
+# Set up the spare checkout and remote address
+git config core.sparsecheckout true
+echo PhantServer/phantconfig-custom.tar.gz >> .git/info/sparse-checkout
+git remote add -f origin https://github.com/shawngmc/ServerSelfConfig.git
+
+# Pull the files
+git pull origin master
+
+# Copy the package out 
+cp ./PhantServer/phantconfig-custom.tar.gz ../
+
+# Delete the repo
+cd ..
+rm -Rf repo
+
+############################################################
+# Install phant
+############################################################
+npm install 
+
 
 # Expose default HTTP and telnet connector port.
 EXPOSE 8080
