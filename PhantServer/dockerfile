@@ -1,0 +1,19 @@
+############################################################
+# Dockerfile to install Phant w/WebUI
+############################################################
+
+# Set the base image to Ubuntu
+FROM node
+
+# File Author / Maintainer
+MAINTAINER Shawn McNaughton
+
+# Update the repository sources list
+RUN apt-get update --quiet
+
+# Get the package from GitHub
+wget https://github.com/shawngmc/ServerSelfConfig/blob/master/PhantServer/phantconfig-custom-20150502.zip?raw=true
+
+# Expose default HTTP and telnet connector port.
+EXPOSE 8080
+EXPOSE 8081
