@@ -10,6 +10,7 @@ contact_url = "http://192.168.1.222:8080/input/WwL2MDpy2vhX8jdY6NgLfrrMY1B?priva
 
 def sendNotification():
 	urllib2.urlopen(contact_url)
+	print("Message sent!")
 	
 	
 def getCurrentTimeMillis():
@@ -24,10 +25,13 @@ last_press_time = 0
 while True:
 	input_state = GPIO.input(18)
 	if input_state == False:
+		print("Button detected...")
 		current_time = getCurrentTimeMillis()
 		if (last_press_time + lockout_period_ms < current_time):
 			last_press_time = current_time
 			sendNotification()
+		else:
+			print("In lockout!")
 		time.sleep(0.2)
 
 		
