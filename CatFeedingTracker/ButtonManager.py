@@ -8,6 +8,13 @@ contact_url = "http://192.168.1.222:8080/input/WwL2MDpy2vhX8jdY6NgLfrrMY1B?priva
 
 #####################################################
 
+def sendNotification():
+	urllib2.urlopen(contact_url)
+	
+	
+def getCurrentTimeMillis():
+	return int(round(time.time() * 1000))
+
 # Set up the pins
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -24,9 +31,3 @@ while True:
 		time.sleep(0.2)
 
 		
-def sendNotification():
-	urllib2.urlopen(contact_url)
-	
-	
-def getCurrentTimeMillis():
-	return int(round(time.time() * 1000))
