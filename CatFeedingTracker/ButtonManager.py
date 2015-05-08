@@ -2,7 +2,7 @@ import RPi.GPIO as GPIO
 import time
 import urllib2
 
-lockout_period_ms = 10000
+lockout_period_ms = 1800000
 contact_url = "http://192.168.1.222:8080/input/WwL2MDpy2vhX8jdY6NgLfrrMY1B?private_key=0ONjdgZEjAuLMQ2wxaWjTjjWRGE&wasfed=Y"
 
 
