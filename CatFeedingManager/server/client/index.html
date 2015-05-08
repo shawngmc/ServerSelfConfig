@@ -1,0 +1,142 @@
+<html lang="en">
+	<head>
+		<title>Cat Feeding Manager</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.css">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.js"></script>
+		<style type="text/css">
+			.tftable {font-size:12px;color:#333333;width:100%;border-width: 1px;border-color: #729ea5;border-collapse: collapse;}
+			.tftable th {font-size:12px;background-color:#acc8cc;border-width: 1px;padding: 8px;border-style: solid;border-color: #729ea5;text-align:left;}
+			.tftable tr {background-color:#d4e3e5;}
+			.tftable td {font-size:12px;border-width: 1px;padding: 8px;border-style: solid;border-color: #729ea5;}
+			.tftable tr:hover {background-color:#ffffff;}
+		</style>
+		<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+	</head>
+	<body>
+        <div class="jumbotron">
+            <div class="container">
+                <h1>Synnie Feeding Log</h1>
+                <p>Track how often the cat has been fed...</p>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>When was she fed last?</h2>
+					<div id="whenfed"></div>
+					<div id="feednow"></div>
+                    <!--<h2>How often has she been fed over the last few days?</h2>
+					<div id="chart"></div>-->
+                </div>
+                <div class="col-md-6">
+                    <h2>When are the most recent feedings?</h2>
+					<div class="CSSTableGenerator">
+						<table id="logTable" class="tftable" cellspacing="10">
+							<thead>
+								<tr>
+									<th>Timestamp</th>
+									<th>Simple</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+				</div>
+            </div>
+        </div>
+			
+	</body>
+
+<script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
+<script src="moment-timezone-with-data.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.3.1/moment-timezone.min.js"></script>
+
+<script type="text/javascript">
+(function() {
+	var phantURL = "http://hitoma.dyndns.org:9123/output/WwL2MDpy2vhX8jdY6NgLfrrMY1B.json";
+	$.ajax({
+		url: phantURL,
+		jsonp: 'callback',
+		cache: true,
+		dataType: 'jsonp',
+		data: {
+		 page: 1
+		},
+		success: function(response) {
+			var nowTimestamp = moment().tz('America/New_York');
+		 
+			// Prep the data map - add the dates in chronological order so we can use Map.keys()
+			var dataMap = new Map();
+			for (i = 5; i > 0; i--) { 
+				dataMap.set(nowTimestamp.clone().subtract(i, 'days').format('YYYY-MM-DD'), 0);
+			}
+			
+			// For each record
+			$.each( response, function( i, item ) {
+				// Get a local time reference
+				var gmtTimestamp = moment.tz(item.timestamp, "UTC");
+				var feedTimestamp = gmtTimestamp.clone().tz('America/New_York');
+			
+				// Update the last fed
+				if (i < 1) {
+					$('#whenfed').text('Synnie was last fed ' + moment(feedTimestamp).fromNow() + '...');
+					if (nowTimestamp.subtract(5, 'hours').unix() > feedTimestamp.unix()) {
+						$('#feednow').text('Synnie should be fed now!');
+					}
+				}
+
+				// Update the chart
+				if (i <= 20) {
+					$('#logTable tbody').append('<tr><td>' + gmtTimestamp.toISOString() + '</td><td>' + feedTimestamp.fromNow() + '</td></tr>');
+				}
+
+				// Update the data map
+				var mapKey = feedTimestamp.clone().subtract(i, 'days').format('YYYY-MM-DD');
+				if (dataMap.has(mapKey)) {
+					dataMap.set(mapKey, parseInt(dataMap.get(mapKey)) + 1);
+				}
+			});
+		
+		/*	// Build the chart
+			var xData = ['x'];
+			var chartData = ['feedings'];
+			console.log(dataMap.keys());
+			console.log(dataMap.values());*/
+			/*console.log(uneval([dataMap.keys()]));
+			console.log(uneval([dataMap.values()]));
+			xData.concat(uneval([dataMap.keys()]));
+			chartData.concat(uneval([dataMap.values()]));*/
+		/*	console.log(xData);
+			console.log(chartData);
+			
+			var chart = c3.generate({
+			data: {
+				x: 'x',
+		//        xFormat: '%Y%m%d', // 'xFormat' can be used as custom format of 'x'
+				columns: [*/
+					/*['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
+					['data', 30, 200, 100, 400, 150, 250],*/
+		/*			xData,
+					chartData
+				]
+			},
+			axis: {
+					x: {
+						type: 'timeseries',
+						tick: {
+							format: '%Y-%m-%d'
+						}
+					}
+				}
+			});*/
+		}
+	});
+	})();
+</script>
+</html>

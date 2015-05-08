@@ -1,0 +1,6 @@
+{
+	"serverName" : "localhost",
+	"listenPort" : 80,
+	
+	"staticDir" : "../client_static/"
+}
